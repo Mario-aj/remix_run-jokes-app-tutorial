@@ -1,9 +1,23 @@
-import type { LoaderArgs, ActionArgs } from "@remix-run/node";
+import type { LoaderArgs, ActionArgs, MetaFunction } from "@remix-run/node";
 import { json, redirect } from "@remix-run/node";
 import { Link, useCatch, useLoaderData, useParams } from "@remix-run/react";
 
 import { db } from "~/utils/db.server";
 import { getUserId } from "~/utils/sesseion.server";
+
+export const meta: MetaFunction<typeof loader> = ({ data }) => {
+  if (!data) {
+    return {
+      title: "No joke",
+      description: "No joke found",
+    };
+  }
+
+  return {
+    title: `"${data.joke.name}" joke`,
+    description: `Enjoy the "${data.joke.name}" joke and much more`,
+  };
+};
 
 export const loader = async ({ params, request }: LoaderArgs) => {
   const userId = await getUserId(request);

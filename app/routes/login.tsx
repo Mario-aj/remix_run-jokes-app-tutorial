@@ -1,14 +1,10 @@
-import type { ActionArgs, LinksFunction } from "@remix-run/node";
+import type { ActionArgs, LinksFunction, MetaFunction } from "@remix-run/node";
 import { Link, useActionData, useSearchParams } from "@remix-run/react";
 
 import stylesUrl from "~/styles/login.css";
 import { db } from "~/utils/db.server";
 import { badRequest } from "~/utils/request.server";
 import { createUserSession, login, register } from "~/utils/sesseion.server";
-
-export const links: LinksFunction = () => [
-  { rel: "stylesheet", href: stylesUrl },
-];
 
 function validateUsername(username: unknown) {
   if (typeof username !== "string" || username.length < 3) {
@@ -29,6 +25,15 @@ function validateUrl(url: string) {
   }
   return "/jokes";
 }
+
+export const links: LinksFunction = () => [
+  { rel: "stylesheet", href: stylesUrl },
+];
+
+export const meta: MetaFunction = () => ({
+  description: "Login to submit your own jokes to Remix Jokes!",
+  title: "Remix Jokes | Login",
+});
 
 export const action = async ({ request }: ActionArgs) => {
   const form = await request.formData();
