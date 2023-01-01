@@ -1,11 +1,10 @@
 import type { ActionArgs, LinksFunction } from "@remix-run/node";
-import { redirect } from "@remix-run/node";
 import { Link, useActionData, useSearchParams } from "@remix-run/react";
 
 import stylesUrl from "~/styles/login.css";
 import { db } from "~/utils/db.server";
 import { badRequest } from "~/utils/request.server";
-import { login } from "~/utils/sesseion.server";
+import { createUserSession, login } from "~/utils/sesseion.server";
 
 export const links: LinksFunction = () => [
   { rel: "stylesheet", href: stylesUrl },
@@ -73,7 +72,7 @@ export const action = async ({ request }: ActionArgs) => {
           formError: `Username/Password combination is incorrect`,
         });
 
-      return redirect("/jokes");
+      return createUserSession(user.id, fields.redirectTo);
     }
     case "register": {
       const userExists = await db.user.findFirst({
