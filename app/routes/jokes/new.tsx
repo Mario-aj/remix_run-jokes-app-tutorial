@@ -1,9 +1,16 @@
 import type { ActionArgs, LoaderArgs } from "@remix-run/node";
 import { json } from "@remix-run/node";
 import { redirect } from "@remix-run/node";
-import { Form, Link, useActionData, useCatch } from "@remix-run/react";
+import {
+  Form,
+  Link,
+  useActionData,
+  useCatch,
+  useTransition,
+} from "@remix-run/react";
 
 import { db } from "~/utils/db.server";
+import { JokeDisplay } from "~/components/jokes";
 import { badRequest } from "~/utils/request.server";
 import { getUserId, requireUserId } from "~/utils/sesseion.server";
 
@@ -83,6 +90,26 @@ export function ErrorBoundary() {
 
 export default function NewJokeRoute() {
   const actionData = useActionData<typeof action>();
+  const transition = useTransition();
+
+  if (transition.submission) {
+    const name = transition.submission.formData.get("name");
+    const content = transition.submission.formData.get("content");
+
+    if (
+      typeof name === "string" &&
+      typeof content === "string" &&
+      !validateJokeContent(content) &&
+      !validateJokeName(name)
+    )
+      return (
+        <JokeDisplay
+          joke={{ name, content }}
+          isOwner={true}
+          canDelete={false}
+        />
+      );
+  }
 
   return (
     <div>
@@ -138,7 +165,11 @@ export default function NewJokeRoute() {
               {actionData.formError}
             </p>
           ) : null}
-          <button type="submit" className="button">
+          <button
+            type="submit"
+            className="button"
+            disabled={transition.state !== "idle"}
+          >
             Add
           </button>
         </div>

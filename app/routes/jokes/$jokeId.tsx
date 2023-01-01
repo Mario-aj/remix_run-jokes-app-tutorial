@@ -1,5 +1,5 @@
-import type { LoaderArgs, ActionArgs, MetaFunction } from "@remix-run/node";
 import { json, redirect } from "@remix-run/node";
+import type { LoaderArgs, ActionArgs, MetaFunction } from "@remix-run/node";
 import {
   Form,
   Link,
@@ -9,6 +9,7 @@ import {
 } from "@remix-run/react";
 
 import { db } from "~/utils/db.server";
+import { JokeDisplay } from "~/components/jokes";
 import { getUserId } from "~/utils/sesseion.server";
 
 export const meta: MetaFunction<typeof loader> = ({ data }) => {
@@ -109,18 +110,5 @@ export function ErrorBoundary() {
 export default function JokeRoute() {
   const { joke, isOwner } = useLoaderData<typeof loader>();
 
-  return (
-    <div>
-      <p>Here's your hilarious joke:</p>
-      <p>{joke.content}</p>
-      <Link to=".">{joke.name}</Link>
-      {isOwner ? (
-        <Form method="post">
-          <button className="button" name="intent" type="submit" value="delete">
-            Delete
-          </button>
-        </Form>
-      ) : null}
-    </div>
-  );
+  return <JokeDisplay isOwner={isOwner} joke={joke} />;
 }
