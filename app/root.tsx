@@ -1,5 +1,5 @@
 import * as React from "react";
-import { LiveReload, Outlet, Links } from "@remix-run/react";
+import { LiveReload, Outlet, Links, useCatch } from "@remix-run/react";
 
 import type { LinksFunction } from "@remix-run/node";
 
@@ -62,6 +62,20 @@ export function ErrorBoundary({ error }: { error: Error }) {
       <div className="error-container">
         <h1>App error</h1>
         <pre>{error.message}</pre>
+      </div>
+    </Document>
+  );
+}
+
+export function CatchBoundary() {
+  const caught = useCatch();
+
+  return (
+    <Document title={`${caught.status} ${caught.statusText}`}>
+      <div className="error-container">
+        <h1>
+          {caught.status} {caught.statusText}
+        </h1>
       </div>
     </Document>
   );
