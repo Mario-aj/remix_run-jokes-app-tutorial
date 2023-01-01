@@ -1,5 +1,12 @@
 import * as React from "react";
-import { LiveReload, Outlet, Links, useCatch, Meta } from "@remix-run/react";
+import {
+  LiveReload,
+  Outlet,
+  Links,
+  useCatch,
+  Meta,
+  Scripts,
+} from "@remix-run/react";
 
 import type { LinksFunction, MetaFunction } from "@remix-run/node";
 
@@ -57,6 +64,7 @@ function Document({
       </head>
       <body>
         {children}
+        <Scripts />
         <LiveReload />
       </body>
     </html>
