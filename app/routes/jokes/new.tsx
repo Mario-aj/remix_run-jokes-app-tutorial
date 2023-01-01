@@ -50,7 +50,6 @@ export async function action({ request }: ActionArgs) {
 
 export default function NewJokeRoute() {
   const actionData = useActionData<typeof action>();
-  console.log({ actionData });
 
   return (
     <div>

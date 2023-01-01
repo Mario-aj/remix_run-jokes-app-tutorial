@@ -4,7 +4,7 @@ import { Link, useActionData, useSearchParams } from "@remix-run/react";
 import stylesUrl from "~/styles/login.css";
 import { db } from "~/utils/db.server";
 import { badRequest } from "~/utils/request.server";
-import { createUserSession, login } from "~/utils/sesseion.server";
+import { createUserSession, login, register } from "~/utils/sesseion.server";
 
 export const links: LinksFunction = () => [
   { rel: "stylesheet", href: stylesUrl },
@@ -85,13 +85,20 @@ export const action = async ({ request }: ActionArgs) => {
           formError: `User with username ${fields.username} already exists`,
         });
       }
-      // create the user
-      // create their session and redirect to /jokes
-      return badRequest({
-        fieldErrors: null,
-        fields,
-        formError: "Not implemented",
+
+      const user = await register({
+        username: fields.username as string,
+        password: fields.password as string,
       });
+
+      if (!user)
+        return badRequest({
+          fieldErrors: null,
+          fields,
+          formError: `Something went wrong trying to create a new user.`,
+        });
+
+      return createUserSession(user.id, fields.redirectTo);
     }
     default: {
       return badRequest({
